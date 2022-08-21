@@ -15,21 +15,24 @@ export default new Vuex.Store({
     },
     // 添加人员
     addTableData (state, payload) {
-      console.log(payload)
+      // console.log(payload)
       state.tableData.push(payload)
       localStorage.setItem('tableData', JSON.stringify(state.tableData))
       state.tableData = JSON.parse(localStorage.getItem('tableData') || '[]')
     },
+    // 修改列表数据
     editTableData (state, payload) {
       state.tableData.splice(payload.index, 1, payload.peopleData)
       localStorage.setItem('tableData', JSON.stringify(state.tableData))
       state.tableData = JSON.parse(localStorage.getItem('tableData') || '[]')
     },
+    // 删除列表数据
     delTableData (state, payload) {
       state.tableData.splice(payload.index, 1)
       localStorage.setItem('tableData', JSON.stringify(state.tableData))
       state.tableData = JSON.parse(localStorage.getItem('tableData') || '[]')
     },
+    // 批量删除多条数据
     allDelTableData (state, payload) {
       const indArr = payload.map(item => item.ind)
       // console.log(indArr)
@@ -49,6 +52,7 @@ export default new Vuex.Store({
     // }
   },
   actions: {
+    // 添加数据
     addTableData (context, payload) {
       // 添加人员
       context.commit('addTableData', payload)

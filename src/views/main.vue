@@ -12,7 +12,6 @@
             </div>
         </div>
         <div class="table">
-            <!-- @select="selectFn" @select-all="selectAllFn" -->
             <el-table @selection-change="handleSelectionChange"  :data="tableData" style="width: 100%;" >
                 <el-table-column label-class-name="col" type="selection" width="50" ></el-table-column>
                 <el-table-column label-class-name="col" label="序号" prop="ind" width="50" ></el-table-column>
@@ -78,9 +77,6 @@ export default {
       dialogVisible: false // 控制批量删除提示框显示
     }
   },
-  //   created () {
-  //     this.tableData = this.$store.state.tableData
-  //   },
   computed: {
     stateData () {
       return [...this.$store.state.tableData]
@@ -143,6 +139,7 @@ export default {
       localStorage.setItem('tableData', JSON.stringify(this.oldTableData))
       this.getList()
       // this.oldTableData = []
+      this.$message.success('撤销成功')
       this.revokeShow = false
     },
     // 搜索方法

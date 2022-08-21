@@ -142,16 +142,12 @@ export default {
         label: '女'
       }],
       index: 0, // 编辑的下标
-      // defaultProps: {
-      //   label: 'name'
-      // },
       cityOptions: cityArr.cityArr
     }
   },
   computed: {
     allAdress () {
-      // reduce((total, curr) => total + curr, '')
-      return this.peopleData.address1.join('') + this.peopleData.address2
+      return this.peopleData.address1.join('') + ' ' + this.peopleData.address2
     }
   },
   watch: {
@@ -182,8 +178,7 @@ export default {
     },
     btnOk (employeeData) {
       this.$refs[employeeData].validate(async (valid) => {
-        if (valid) {
-          this.$message.success('校验成功')
+        if (valid) { // 校验成功
           if (this.addOrEdit === 0) {
             // 发起新增员工请求
             const tableData = JSON.parse(localStorage.getItem('tableData'))
@@ -194,13 +189,15 @@ export default {
               this.peopleData.ind = tableData[tableLength - 1].ind + 1
             }
             await this.$store.dispatch('addTableData', this.peopleData)
-            // console.dir(this.peopleData)
+            this.$message.success('新增成功')
           } else {
             // 编辑
             await this.$store.dispatch('editTableData', { peopleData: this.peopleData, index: this.index })
+            this.$message.success('编辑成功')
           }
           this.$emit('update:showDialog', false)
         } else {
+          this.$message.error('操作失败！')
           return false
         }
       })
