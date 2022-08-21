@@ -181,7 +181,6 @@ export default {
       }
     },
     btnOk (employeeData) {
-      console.log(this.peopleData)
       this.$refs[employeeData].validate(async (valid) => {
         if (valid) {
           this.$message.success('校验成功')
@@ -195,8 +194,6 @@ export default {
             // 编辑
             await this.$store.dispatch('editTableData', { peopleData: this.peopleData, index: this.index })
           }
-          // 重新拉取数据
-          this.$parent.getList()
           this.$emit('update:showDialog', false)
         } else {
           return false

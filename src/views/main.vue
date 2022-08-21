@@ -5,7 +5,7 @@
         <div class="title">
             <div class="left">
               <el-button class="add" @click="btnAdd">新建</el-button>
-              <el-input class="search" placeholder="按关键字搜索" v-model="input"></el-input>
+              <el-input class="search" placeholder="按关键字搜索" v-model="searchVal" @change="searchFn"></el-input>
             </div>
             <div class="right">
               <el-button class="revoke" @click="idRevoke">撤销</el-button>
@@ -15,7 +15,7 @@
             <!-- @select="selectFn" @select-all="selectAllFn" -->
             <el-table @selection-change="handleSelectionChange"  :data="tableData" style="width: 100%;" >
                 <el-table-column label-class-name="col" type="selection" width="50" ></el-table-column>
-                <el-table-column label-class-name="col" label="序号" type="index" width="50" ></el-table-column>
+                <el-table-column label-class-name="col" label="序号" prop="ind" width="50" ></el-table-column>
                 <el-table-column label-class-name="col" class="name" prop="username" label="姓名"  align="center" ></el-table-column>
                 <el-table-column label-class-name="col" class="age" prop="age" label="年龄"  align="center" ></el-table-column>
                 <el-table-column label-class-name="col" class="sex" prop="sex"  label="性别"  align="center" ></el-table-column>
@@ -66,9 +66,10 @@ export default {
   },
   data () {
     return {
+      searchArr: [], // 模糊搜索得到的数组
       tableData: [], //  列表数据
       oldTableData: [], // 上一次的数据
-      input: '', // 搜索框的值
+      searchVal: '', // 搜索框的值
       radio: false,
       showDialog: false, // 控制添加与编辑弹层的显示
       revokeShow: false, // 控制是否回退的弹层的显示
@@ -84,27 +85,19 @@ export default {
     stateData () {
       return [...this.$store.state.tableData]
     }
-
   },
   watch: {
     stateData: {
       handler (newVal, oldVal) {
-        // console.log(oldVal)
-        // console.log('newVal', newVal)
+        console.log(oldVal)
+        console.log('newVal', newVal)
         this.oldTableData = oldVal
         this.tableData = newVal
       },
       immediate: true,
       deep: true
     }
-    // tableData: {
-    //   handler (newVal, oldVal) {
-    //     this.tableData = newVal
-    //     this.oldTableData = oldVal
-    //   },
-    //   immediate: true,
-    //   deep: true
-    // }
+
   },
   methods: {
     // 编辑
@@ -151,6 +144,23 @@ export default {
       this.getList()
       // this.oldTableData = []
       this.revokeShow = false
+    },
+    // 搜索方法
+    searchFn (val) {
+      if (val.length < 1) {
+        this.getList()
+      }
+      const result = this.$store.state.tableData.filter(item => {
+        const valArr = Object.values(item)
+        console.log(valArr)
+        const ind = valArr.findIndex(item1 => {
+          console.log(item1, val)
+          // eslint-disable-next-line eqeqeq
+          return item1 == val
+        })
+        if (ind !== -1) return item
+      })
+      this.tableData = result
     }
   }
 
