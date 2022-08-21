@@ -85,9 +85,15 @@ export default {
   watch: {
     stateData: {
       handler (newVal, oldVal) {
-        // console.log(oldVal)
+        console.log(oldVal)
         // console.log('newVal', newVal)
         this.oldTableData = oldVal
+        if (!oldVal) {
+          localStorage.setItem('oldTableData', JSON.stringify([]))
+        } else {
+          localStorage.setItem('oldTableData', JSON.stringify(this.oldTableData))
+        }
+        this.oldTableData = JSON.parse(localStorage.getItem('oldTableData'))
         this.tableData = newVal
       },
       immediate: true,
@@ -139,7 +145,8 @@ export default {
     revoke () {
       console.log('this.oldTableData', this.oldTableData)
       console.log('this.tableData', this.tableData)
-      if (!this.oldTableData) {
+      console.log(typeof this.oldTableData)
+      if (!this.oldTableData.length && this.tableData.length > 1) {
         this.$message.warning('您没有上一步操作的记录')
         this.revokeShow = false
         return
