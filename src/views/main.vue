@@ -81,21 +81,16 @@ export default {
   //     this.tableData = this.$store.state.tableData
   //   },
   computed: {
-    stateData: {
-      get () {
-        return this.$store.state.tableData
-      },
-      set (val) {
-        this.oldTableData = val
-      }
+    stateData () {
+      return [...this.$store.state.tableData]
     }
 
   },
   watch: {
     stateData: {
       handler (newVal, oldVal) {
-        console.log(oldVal)
-        console.log('newVal', newVal)
+        // console.log(oldVal)
+        // console.log('newVal', newVal)
         this.oldTableData = oldVal
         this.tableData = newVal
       },
@@ -130,6 +125,7 @@ export default {
     // 获取本地缓存中的tableData
     getList () {
       this.tableData = JSON.parse(localStorage.getItem('tableData'))
+      this.$store.commit('setTableDate', this.tableData)
     },
     // 点击单选框后的回调函数
     handleSelectionChange (e) {

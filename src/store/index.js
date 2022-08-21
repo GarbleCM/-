@@ -8,6 +8,11 @@ export default new Vuex.Store({
     tableData: JSON.parse(localStorage.getItem('tableData') || '[]')
   },
   mutations: {
+    setTableDate (state, payload) {
+      // console.log(payload)
+      localStorage.setItem('tableData', JSON.stringify(payload))
+      state.tableData = JSON.parse(localStorage.getItem('tableData') || '[]')
+    },
     // 添加人员
     addTableData (state, payload) {
       console.log(payload)
