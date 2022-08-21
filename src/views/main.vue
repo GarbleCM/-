@@ -19,7 +19,7 @@
                 <el-table-column label-class-name="col" class="name" prop="username" label="姓名"  align="center" ></el-table-column>
                 <el-table-column label-class-name="col" class="age" prop="age" label="年龄"  align="center" ></el-table-column>
                 <el-table-column label-class-name="col" class="sex" prop="sex"  label="性别"  align="center" ></el-table-column>
-                <el-table-column label-class-name="col" class="phone" prop="phone" width="150" label="联想电话"  align="center" ></el-table-column>
+                <el-table-column label-class-name="col" class="phone" prop="mobile" width="150" label="联想电话"  align="center" ></el-table-column>
                 <el-table-column label-class-name="col" class="address" prop="address" label="详细地址" width="700" align="center" ></el-table-column>
                 <el-table-column label-class-name="col" label="操作" width="200"  align="center">
                     <template slot-scope="scope">

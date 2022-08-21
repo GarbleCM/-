@@ -186,8 +186,13 @@ export default {
           this.$message.success('校验成功')
           if (this.addOrEdit === 0) {
             // 发起新增员工请求
-            const tableLength = JSON.parse(localStorage.getItem('tableData')).length
-            this.peopleData.ind = tableLength
+            const tableData = JSON.parse(localStorage.getItem('tableData'))
+            const tableLength = tableData.length
+            if (tableLength === 0) {
+              this.peopleData.ind = 0
+            } else {
+              this.peopleData.ind = tableData[tableLength - 1].ind + 1
+            }
             await this.$store.dispatch('addTableData', this.peopleData)
             // console.dir(this.peopleData)
           } else {
