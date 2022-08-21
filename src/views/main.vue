@@ -8,7 +8,7 @@
               <el-input class="search" placeholder="按关键字搜索" v-model.trim="searchVal" @change="searchFn"></el-input>
             </div>
             <div class="right">
-              <el-button class="revoke" @click="idRevoke">撤销</el-button>
+              <el-button class="revoke" @click="idRevoke" :plain="!showDisabled" :disabled="!showDisabled">撤销</el-button>
             </div>
         </div>
         <div class="table">
@@ -80,6 +80,9 @@ export default {
   computed: {
     stateData () {
       return [...this.$store.state.tableData]
+    },
+    showDisabled () {
+      return !this.searchVal
     }
   },
   watch: {
@@ -143,9 +146,10 @@ export default {
     },
     // 确定回退上一步
     revoke () {
-      console.log('this.oldTableData', this.oldTableData)
-      console.log('this.tableData', this.tableData)
-      console.log(typeof this.oldTableData)
+      // console.log('this.oldTableData', this.oldTableData)
+      // console.log('this.tableData', this.tableData)
+      // console.log(typeof this.oldTableData)
+      console.log(this.searchVal)
       if (!this.oldTableData.length && this.tableData.length > 1) {
         this.$message.warning('您没有上一步操作的记录')
         this.revokeShow = false
