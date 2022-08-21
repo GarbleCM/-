@@ -5,7 +5,7 @@
         <div class="title">
             <div class="left">
               <el-button class="add" @click="btnAdd">新建</el-button>
-              <el-input class="search" placeholder="按关键字搜索" v-model="searchVal" @change="searchFn"></el-input>
+              <el-input class="search" placeholder="按关键字搜索" v-model.trim="searchVal" @change="searchFn"></el-input>
             </div>
             <div class="right">
               <el-button class="revoke" @click="idRevoke">撤销</el-button>
