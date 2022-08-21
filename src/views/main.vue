@@ -3,8 +3,13 @@
     <h1 class="header">用户管理</h1>
     <div class="main">
         <div class="title">
-            <el-button class="add" @click="btnAdd">新建</el-button>
-            <el-input class="search" placeholder="按关键字搜索" v-model="input"></el-input>
+            <div class="left">
+              <el-button class="add" @click="btnAdd">新建</el-button>
+              <el-input class="search" placeholder="按关键字搜索" v-model="input"></el-input>
+            </div>
+            <div class="right">
+              <el-button class="revoke" @click="idRevoke">撤销</el-button>
+            </div>
         </div>
         <div class="table">
             <!-- @select="selectFn" @select-all="selectAllFn" -->
@@ -24,7 +29,29 @@
                 </el-table-column>
             </el-table>
         </div>
-        <el-button class="alldel" size="small">批量删除</el-button>
+        <el-button class="alldel" size="small" @click="isAllDelFn">批量删除</el-button>
+        <el-dialog
+          title="提示框"
+          :visible.sync="dialogVisible"
+          width="30%"
+        >
+          <span>是否批量删除</span>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="allDelFn">确 定</el-button>
+          </span>
+        </el-dialog>
+        <el-dialog
+          title="提示框"
+          :visible.sync="revokeShow"
+          width="30%"
+        >
+          <span>回退上一步</span>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="revokeShow = false">取 消</el-button>
+            <el-button type="primary" @click="revoke">确 定</el-button>
+          </span>
+        </el-dialog>
     </div>
     <MyDialog ref="dialog" :showDialog.sync="showDialog" :addOrEdit="addOrEdit"></MyDialog>
   </div>
@@ -39,55 +66,95 @@ export default {
   },
   data () {
     return {
-      tableData: [],
-      input: '',
+      tableData: [], //  列表数据
+      oldTableData: [], // 上一次的数据
+      input: '', // 搜索框的值
       radio: false,
-      showDialog: false,
-      addOrEdit: 0
+      showDialog: false, // 控制添加与编辑弹层的显示
+      revokeShow: false, // 控制是否回退的弹层的显示
+      addOrEdit: 0, // 控制弹层是 添加状态还是编辑状态 0-添加 1-编辑
+      allDelArr: [], // 要批量删除的数组
+      dialogVisible: false // 控制批量删除提示框显示
     }
   },
   //   created () {
   //     this.tableData = this.$store.state.tableData
   //   },
   computed: {
-    stateData () {
-      return this.$store.state.tableData
+    stateData: {
+      get () {
+        return this.$store.state.tableData
+      },
+      set (val) {
+        this.oldTableData = val
+      }
     }
 
   },
   watch: {
     stateData: {
       handler (newVal, oldVal) {
+        console.log(oldVal)
+        console.log('newVal', newVal)
+        this.oldTableData = oldVal
         this.tableData = newVal
       },
-      immediate: true
+      immediate: true,
+      deep: true
     }
+    // tableData: {
+    //   handler (newVal, oldVal) {
+    //     this.tableData = newVal
+    //     this.oldTableData = oldVal
+    //   },
+    //   immediate: true,
+    //   deep: true
+    // }
   },
   methods: {
+    // 编辑
     handleEdit (index, row) {
       this.addOrEdit = 1
       this.showDialog = true
       this.$refs.dialog.addOrEditHandler({ index, row })
     },
+    // 删除
     handleDelete (index, row) {
       this.$store.dispatch('delTableData', { index, row })
     },
+    // 新增
     btnAdd () {
       this.addOrEdit = 0
       this.showDialog = true
     },
+    // 获取本地缓存中的tableData
     getList () {
       this.tableData = JSON.parse(localStorage.getItem('tableData'))
     },
-    // selectFn (value, row) {
-    //   console.log(value)
-    //   console.log(row)
-    // },
-    // selectAllFn (value) {
-    // //   console.log(value)
-    // },
+    // 点击单选框后的回调函数
     handleSelectionChange (e) {
-      console.log(e)
+      this.allDelArr = e
+    },
+    // 是否批量删除
+    isAllDelFn () {
+      this.dialogVisible = true
+    },
+    // 确定批量删除
+    async allDelFn () {
+      await this.$store.commit('allDelTableData', this.allDelArr)
+      this.dialogVisible = false
+    },
+    // 是否回退上一步
+    idRevoke () {
+      this.revokeShow = true
+    },
+    // 确定回退上一步
+    revoke () {
+      console.log(this.oldTableData)
+      localStorage.setItem('tableData', JSON.stringify(this.oldTableData))
+      this.getList()
+      // this.oldTableData = []
+      this.revokeShow = false
     }
   }
 
@@ -108,7 +175,8 @@ export default {
     margin: 50px auto;
     .title{
         display: flex;
-        justify-content: flex-start;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 10px;
         .add{
             border: none;

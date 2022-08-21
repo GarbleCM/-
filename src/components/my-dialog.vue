@@ -20,7 +20,7 @@
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
-                @change="opChange"
+
             >
             </el-option>
         </el-select>
@@ -29,7 +29,7 @@
         <el-input v-model="peopleData.mobile" style="width: 50%" placeholder="请输入手机号" />
       </el-form-item>
       <el-form-item label="详细地址" prop="address1">
-        <el-cascader v-model="peopleData.address1" :options="cityOptions" @change="handleChange"></el-cascader>
+        <el-cascader v-model="peopleData.address1" :options="cityOptions"></el-cascader>
       </el-form-item>
       <el-form-item  prop="address2">
         <el-input style="width: 40%" v-model="peopleData.address2" placeholder="请输入详细地址" />
@@ -37,7 +37,7 @@
     </el-form>
     <el-row slot="footer" class="dialog-footer">
       <el-button size="small" @click="btnCancel">取 消</el-button>
-      <el-button size="small" type="primary" @click="btnOk">确 定</el-button>
+      <el-button size="small" type="primary" @click="btnOk('employeeData')">确 定</el-button>
     </el-row>
   </el-dialog>
 </template>
@@ -142,15 +142,16 @@ export default {
         label: '女'
       }],
       index: 0, // 编辑的下标
-      defaultProps: {
-        label: 'name'
-      },
+      // defaultProps: {
+      //   label: 'name'
+      // },
       cityOptions: cityArr.cityArr
     }
   },
   computed: {
     allAdress () {
-      return this.peopleData.address1.reduce((total, curr) => total + curr, '') + this.peopleData.address2
+      // reduce((total, curr) => total + curr, '')
+      return this.peopleData.address1.join('') + this.peopleData.address2
     }
   },
   watch: {
@@ -166,6 +167,8 @@ export default {
     btnCancel () {
       // console.log('调用了btncancel')
       // 重置表单
+      this.$refs.employeeData.resetFields() // 重置校验提示
+      this.$emit('update:showDialog', false)
       this.peopleData = {
         // ind: 0,
         username: '', // 姓名
@@ -176,41 +179,38 @@ export default {
         address1: [], // 地址
         address2: '' // 地址
       }
-      this.$refs.employeeData.resetFields() // 重置校验提示
-      this.$emit('update:showDialog', false)
     },
-    async btnOk () {
-      await this.$refs.employeeData.validate((valid) => {
+    btnOk (employeeData) {
+      console.log(this.peopleData)
+      this.$refs[employeeData].validate(async (valid) => {
         if (valid) {
           this.$message.success('校验成功')
+          if (this.addOrEdit === 0) {
+            // 发起新增员工请求
+            const tableLength = JSON.parse(localStorage.getItem('tableData')).length
+            this.peopleData.ind = tableLength
+            await this.$store.dispatch('addTableData', this.peopleData)
+            // console.dir(this.peopleData)
+          } else {
+            // 编辑
+            await this.$store.dispatch('editTableData', { peopleData: this.peopleData, index: this.index })
+          }
+          // 重新拉取数据
+          this.$parent.getList()
+          this.$emit('update:showDialog', false)
         } else {
           return false
         }
       })
-      if (this.addOrEdit === 0) {
-        // 发起新增员工请求
-        // const tableLength = JSON.parse(localStorage.getItem('tableData')).length
-        // // console.log(tableLength)
-        // this.peopleData.ind = tableLength
-        console.log(this.peopleData)
-        await this.$store.dispatch('addTableData', this.peopleData)
-      } else {
-        // 编辑
-        console.log(11)
-        await this.$store.dispatch('editTableData', { peopleData: this.peopleData, index: this.index })
-      }
-      // 重新拉取数据
-      this.$parent.getList()
-      this.$parent.showDialog = false
     },
-    handleChange () {
+    // handleChange () {
 
-    },
-    opChange (e) {
-      console.log(e)
-    },
+    // },
+    // opChange (e) {
+    //   console.log(e)
+    // },
     addOrEditHandler (obj) {
-    //   console.log(obj)
+      console.log(obj)
       this.peopleData = { ...obj.row }
       this.index = obj.index
     }
