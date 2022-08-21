@@ -128,6 +128,7 @@ export default {
     btnAdd () {
       this.addOrEdit = 0
       this.showDialog = true
+      this.searchVal = ''
     },
     // 获取本地缓存中的tableData
     getList () {
