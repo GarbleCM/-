@@ -65,9 +65,9 @@ export default {
   },
   data () {
     return {
-      searchArr: [], // 模糊搜索得到的数组
+      // searchArr: [], // 模糊搜索得到的数组
       tableData: [], //  列表数据
-      oldTableData: [], // 上一次的数据
+      oldTableData: [], // 上一次的列表数据 用于回退
       searchVal: '', // 搜索框的值
       radio: false,
       showDialog: false, // 控制添加与编辑弹层的显示
@@ -85,8 +85,8 @@ export default {
   watch: {
     stateData: {
       handler (newVal, oldVal) {
-        console.log(oldVal)
-        console.log('newVal', newVal)
+        // console.log(oldVal)
+        // console.log('newVal', newVal)
         this.oldTableData = oldVal
         this.tableData = newVal
       },
@@ -98,6 +98,8 @@ export default {
   methods: {
     // 编辑
     handleEdit (index, row) {
+      console.log('indxex', index)
+      console.log('row', row)
       this.addOrEdit = 1
       this.showDialog = true
       this.$refs.dialog.addOrEditHandler({ index, row })
@@ -135,7 +137,13 @@ export default {
     },
     // 确定回退上一步
     revoke () {
-      console.log(this.oldTableData)
+      console.log('this.oldTableData', this.oldTableData)
+      console.log('this.tableData', this.tableData)
+      if (!this.oldTableData) {
+        this.$message.warning('您没有上一步操作的记录')
+        this.revokeShow = false
+        return
+      }
       localStorage.setItem('tableData', JSON.stringify(this.oldTableData))
       this.getList()
       // this.oldTableData = []

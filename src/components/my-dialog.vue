@@ -57,6 +57,7 @@ export default {
   },
   data () {
     return {
+      // 用于记录新增与编辑时的数据
       peopleData: {
         username: '', // 姓名
         mobile: '', // 手机号
@@ -141,7 +142,7 @@ export default {
         value: '女',
         label: '女'
       }],
-      index: 0, // 编辑的下标
+      index: 0, // 编辑状态的下标
       cityOptions: cityArr.cityArr
     }
   },
@@ -202,14 +203,8 @@ export default {
         }
       })
     },
-    // handleChange () {
-
-    // },
-    // opChange (e) {
-    //   console.log(e)
-    // },
     addOrEditHandler (obj) {
-      console.log(obj)
+      // console.log(obj)
       this.peopleData = { ...obj.row }
       this.index = obj.index
     }
