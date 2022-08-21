@@ -183,10 +183,11 @@ export default {
           if (this.addOrEdit === 0) {
             // 发起新增员工请求
             const tableData = JSON.parse(localStorage.getItem('tableData'))
-            const tableLength = tableData.length
-            if (tableLength === 0) {
+            // console.log(tableData.length)
+            if (!tableData || tableData.length === 0) {
               this.peopleData.ind = 0
             } else {
+              const tableLength = tableData.length
               this.peopleData.ind = tableData[tableLength - 1].ind + 1
             }
             await this.$store.dispatch('addTableData', this.peopleData)
