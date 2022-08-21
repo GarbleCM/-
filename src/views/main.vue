@@ -29,6 +29,7 @@
             </el-table>
         </div>
         <el-button class="alldel" size="small" @click="isAllDelFn">批量删除</el-button>
+        <!-- 批量删除对话框 -->
         <el-dialog
           title="提示框"
           :visible.sync="dialogVisible"
@@ -40,6 +41,7 @@
             <el-button type="primary" @click="allDelFn">确 定</el-button>
           </span>
         </el-dialog>
+        <!-- 回退上一步对话框 -->
         <el-dialog
           title="提示框"
           :visible.sync="revokeShow"
@@ -97,6 +99,10 @@ export default {
           localStorage.setItem('oldTableData', JSON.stringify(this.oldTableData))
         }
         this.oldTableData = JSON.parse(localStorage.getItem('oldTableData'))
+        if (this.searchVal.length >= 1) { // 如果搜索框还有值则继续查询
+          this.searchFn(this.searchVal)
+          return
+        }
         this.tableData = newVal
       },
       immediate: true,
@@ -107,8 +113,8 @@ export default {
   methods: {
     // 编辑
     handleEdit (index, row) {
-      console.log('indxex', index)
-      console.log('row', row)
+      // console.log('indxex', index)
+      // console.log('row', row)
       this.addOrEdit = 1
       this.showDialog = true
       this.$refs.dialog.addOrEditHandler({ index, row })
@@ -116,6 +122,7 @@ export default {
     // 删除
     handleDelete (index, row) {
       this.$store.dispatch('delTableData', { index, row })
+      // this.$message.success('删除成功')
     },
     // 新增
     btnAdd () {
@@ -139,6 +146,7 @@ export default {
     async allDelFn () {
       await this.$store.commit('allDelTableData', this.allDelArr)
       this.dialogVisible = false
+      this.$message.success('批量删除成功')
     },
     // 是否回退上一步
     idRevoke () {
@@ -161,7 +169,7 @@ export default {
       this.$message.success('撤销成功')
       this.revokeShow = false
     },
-    // 搜索方法
+    // 搜索关键词方法
     searchFn (val) {
       if (val.length < 1) {
         this.getList()

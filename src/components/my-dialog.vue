@@ -11,7 +11,7 @@
         <el-input v-model="peopleData.username" style="width: 40%" placeholder="1-4字符" />
       </el-form-item>
       <el-form-item label="年龄" prop="age">
-        <el-input v-model.number="peopleData.age" style="width: 40%" placeholder="请输入年龄" />
+        <el-input v-model.number="peopleData.age" type="age" style="width: 40%" placeholder="请输入年龄" />
       </el-form-item>
       <el-form-item label="性别" prop="sex">
         <el-select v-model="peopleData.sex" placeholder="请选择性别">
@@ -37,7 +37,7 @@
     </el-form>
     <el-row slot="footer" class="dialog-footer">
       <el-button size="small" @click="btnCancel">取 消</el-button>
-      <el-button size="small" type="primary" @click="btnOk('employeeData')">确 定</el-button>
+      <el-button size="small" type="primary" @click="btnOk('employeeData')">保 存</el-button>
     </el-row>
   </el-dialog>
 </template>
@@ -100,7 +100,15 @@ export default {
           },
           {
             type: 'number',
-            message: '年龄必须为数值'
+            trigger: 'blur',
+            message: '年龄必须为数值且整形'
+          },
+          {
+            type: 'number',
+            max: 200,
+            min: 1,
+            trigger: 'blur',
+            message: '年龄在1-200之间'
           }
         ],
         sex: [
@@ -142,7 +150,7 @@ export default {
         value: '女',
         label: '女'
       }],
-      index: 0, // 编辑状态的下标
+      // index: 0, // 编辑状态的下标
       cityOptions: cityArr.cityArr
     }
   },
@@ -194,12 +202,12 @@ export default {
             this.$message.success('新增成功')
           } else {
             // 编辑
-            await this.$store.dispatch('editTableData', { peopleData: this.peopleData, index: this.index })
+            await this.$store.dispatch('editTableData', this.peopleData)
             this.$message.success('编辑成功')
           }
           this.$emit('update:showDialog', false)
         } else {
-          this.$message.error('操作失败！')
+          this.$message.error('校验失败！')
           return false
         }
       })
@@ -207,7 +215,7 @@ export default {
     addOrEditHandler (obj) {
       // console.log(obj)
       this.peopleData = { ...obj.row }
-      this.index = obj.index
+      // this.index = obj.index
     }
   }
 }

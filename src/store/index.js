@@ -22,13 +22,15 @@ export default new Vuex.Store({
     },
     // 修改列表数据
     editTableData (state, payload) {
-      state.tableData.splice(payload.index, 1, payload.peopleData)
+      const ind = state.tableData.findIndex(item => item.ind === payload.ind)
+      state.tableData.splice(ind, 1, payload)
       localStorage.setItem('tableData', JSON.stringify(state.tableData))
       state.tableData = JSON.parse(localStorage.getItem('tableData') || '[]')
     },
     // 删除列表数据
     delTableData (state, payload) {
-      state.tableData.splice(payload.index, 1)
+      const ind = state.tableData.findIndex(item => item.ind === payload.row.ind)
+      state.tableData.splice(ind, 1)
       localStorage.setItem('tableData', JSON.stringify(state.tableData))
       state.tableData = JSON.parse(localStorage.getItem('tableData') || '[]')
     },
